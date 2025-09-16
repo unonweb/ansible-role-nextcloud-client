@@ -1,0 +1,18 @@
+---
+nextcloud_client:
+  user:
+  autostart: true
+  config:
+    src: nextcloud.cfg.j2
+    init: false
+    local_sync_dir: # relative to home
+    nextcloud:
+      user:
+      url: https://cloud.franzk.net
+  appimage:
+    state:
+  apt:
+    state: present
+  nautilus_plugin:
+    apt:
+      state: present

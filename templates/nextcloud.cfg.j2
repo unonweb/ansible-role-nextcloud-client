@@ -1,0 +1,44 @@
+[General]
+confirmExternalStorage=true
+isVfsEnabled=false
+launchOnSystemStartup={{ nextcloud_client.autostart }}
+newBigFolderSizeLimit=500
+optionalServerNotifications=true
+showCallNotifications=true
+useNewBigFolderSizeLimit=true
+promptDeleteAllFiles=true
+
+[Nextcloud]
+autoUpdateCheck=false
+remotePollInterval=30000
+forceSyncInterval=7200000
+fullLocalDiscoveryInterval=3600000
+notificationRefreshInterval=300000
+
+[Accounts]
+0\Folders\1\ignoreHiddenFiles=false
+0\Folders\1\localPath=/home/{{ nextcloud_client.user }}/{{ nextcloud_client.config.local_sync_dir }}/
+0\Folders\1\targetPath=/
+0\Folders\1\version=2
+0\Folders\1\virtualFilesMode=off
+0\authType=webflow
+0\dav_user={{ nextcloud_client.config.nextcloud.user }}
+0\displayName={{ nextcloud_client.config.nextcloud.user }}
+0\networkDownloadLimit=0
+0\networkDownloadLimitSetting=-2
+0\networkProxyHostName=
+0\networkProxyNeedsAuth=false
+0\networkProxyPort=0
+0\networkProxySetting=0
+0\networkProxyType=0
+0\networkProxyUser=
+0\networkUploadLimit=0
+0\networkUploadLimitSetting=-2
+0\serverColor=@Variant(\0\0\0\x43\x1\xff\xff\xc9\xc9\xc9\xc9\xc9\xc9\0\0)
+0\serverHasValidSubscription=false
+0\serverTextColor=@Variant(\0\0\0\x43\x1\xff\xff\0\0\0\0\0\0\0\0)
+0\url={{ nextcloud_client.config.nextcloud.url }}
+0\user=@Invalid()
+0\version=1
+0\webflow_user={{ nextcloud_client.config.nextcloud.user }}
+version=2

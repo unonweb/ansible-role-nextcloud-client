@@ -1,0 +1,200 @@
+---
+# NOTES
+# -----
+# The issue with the appimage installation is that nautilus-nextcloud depends on nextcloud-desktop
+# So if we want the nautilus integration we need to install nextcloud via apt anyway
+
+- name: nextcloud-client role
+  tags:
+    - nextcloud-client
+    - nextcloud-desktop
+  vars:
+    _path_autostart_desktop: "/home/{{ nextcloud_client.user }}/.config/autostart/nextcloud-client.desktop"
+  block:
+
+  # check vars
+  - name: Check vars for nextcloud-client role
+    ansible.builtin.assert:
+      that:
+      - nextcloud_client.user != None
+      - nextcloud_client.config.nextcloud.user != None
+      - nextcloud_client.config.nextcloud.url != None
+      - nextcloud_client.config.local_sync_dir != None
+
+  # mkdir 
+  - when: nextcloud_client.config.local_sync_dir != None
+    name: Mkdir /home/{{ nextcloud_client.user }}/{{ nextcloud_client.config.local_sync_dir }}
+    become: true
+    ansible.builtin.file:
+      path: "/home/{{ nextcloud_client.user }}/{{ nextcloud_client.config.local_sync_dir }}"
+      state: directory
+      owner: "{{ nextcloud_client.user }}"
+      group: "{{ nextcloud_client.user }}"
+      mode: o=rwx,g=,o=
+
+  # apt
+  - when: nextcloud_client.apt.state != None
+    block:
+
+    # apt nextcloud-desktop
+    - name: apt {{ nextcloud_client.apt.state }} nextcloud-desktop
+      become: true
+      ansible.builtin.apt:
+        state: "{{ nextcloud_client.apt.state }}"
+        name: nextcloud-desktop
+
+    # apt nautilus-nextcloud
+    - name: apt {{ nextcloud_client.nautilus_plugin.apt.state }} nautilus-nextcloud
+      become: true
+      ansible.builtin.apt:
+        state: "{{ nextcloud_client.nautilus_plugin.apt.state }}"
+        name: nautilus-nextcloud
+
+    # cp autostart desktop file
+    - when: nextcloud_client.autostart == true
+      name: Copy autostart file {{ _path_autostart_desktop }}
+      become: true
+      notify: update-desktop-database
+      ansible.builtin.file:
+        src: nextcloud-client-autostart.apt.desktop
+        dest: "{{ _path_autostart_desktop }}"
+        owner: "{{ nextcloud_client.user }}"
+        group: "{{ nextcloud_client.user }}"
+        mode: u=rw,g=,o=r # world readable
+
+  # appimage
+  - when: nextcloud_client.appimage.state != None
+    vars:
+      _appimage_file_app: Nextcloud-3.16.6-x86_64.AppImage
+      _appimage_file_icon: icon-nextcloud-96.png
+      _appimage_dest_desktop: /usr/share/applications/nextcloud-client.desktop
+      _appimage_dest_dir: /opt/nextcloud-client
+      _appimage_dest_app: "{{ _appimage_dest_dir }}/nextcloud-desktop.AppImage"
+      _appimage_dest_icon: "{{ _appimage_dest_dir }}/{{ _appimage_file_icon }}"
+    block:
+
+    # appimage present
+    - when: nextcloud_client.appimage.state == "present"
+      block:
+
+      # mkdir
+      - name: Mkdir {{ _appimage_dest_dir }}
+        become: true
+        ansible.builtin.file:
+          path: "{{ _appimage_dest_dir }}"
+          state: directory
+          mode: o=rwx,g=,o=rx
+
+      # copy appimage
+      - name: Copy appimage {{ _appimage_dest_app }}
+        become: true
+        ansible.builtin.copy:
+          src: "{{ _appimage_file_app }}"
+          dest: "{{ _appimage_dest_app }}"
+          owner: root
+          group: root
+          mode: u=rwx,g=,o=rx
+
+      # copy icon
+      - name: Copy icon {{ _appimage_dest_icon }}
+        become: true
+        ansible.builtin.copy:
+          src: "{{ _appimage_file_icon }}"
+          dest: "{{ _appimage_dest_icon }}"
+          owner: root
+          group: root
+          mode: u=rw,g=,o=r
+
+      # template desktop file
+      - name: Template desktop file {{ _appimage_dest_desktop }}
+        become: true
+        notify: update-desktop-database
+        vars:
+          _path_icon: "{{ _appimage_dest_icon }}"
+          _path_exec: "{{ _appimage_dest_app }}"
+        ansible.builtin.template:
+          src: appimage.desktop.j2
+          dest: "{{ _appimage_dest_desktop }}"
+          owner: root
+          group: root
+          mode: u=rw,g=,o=r # world readable
+
+      # template autostart desktop file
+      - when: nextcloud_client.autostart == true
+        become: true
+        name: Template autostart file {{ _path_autostart_desktop }}
+        notify: update-desktop-database
+        vars:
+          _path_icon: "{{ _appimage_dest_icon }}"
+          _path_exec: "{{ _appimage_dest_app }}"
+        ansible.builtin.template:
+          src: appimage-autostart.desktop.j2
+          dest: "{{ _path_autostart_desktop }}"
+          owner: "{{ nextcloud_client.user }}"
+          group: "{{ nextcloud_client.user }}"
+          mode: u=rw,g=,o=r # world readable
+
+    # appimage absent
+    - when: nextcloud_client.appimage.state == "absent"
+      block:
+
+      # remove app dir
+      - name: Remove {{ _appimage_dest_dir }}
+        become: true
+        ignore_errors: true
+        failed_when: false
+        ansible.builtin.file:
+          path: "{{ _appimage_dest_dir }}"
+          state: absent
+
+      # remove .desktop
+      - name: Remove "{{ _appimage_dest_desktop }}"
+        become: true
+        ignore_errors: true
+        failed_when: false
+        ansible.builtin.file:
+          path: "{{ _appimage_dest_desktop }}"
+          state: absent
+
+  # remove .autostart
+  - when: nextcloud_client.autostart == false 
+    name: Remove "{{ _path_autostart_desktop }}"
+    become: true
+    ignore_errors: true
+    failed_when: false
+    ansible.builtin.file:
+      path: "{{ _path_autostart_desktop }}"
+      state: absent
+  
+  # config
+  - when: 
+    - nextcloud_client.config.src != None
+    - nextcloud_client.config.init == true
+    block:
+
+    # check vars
+    - name: Check vars for nextcloud-client role
+      ansible.builtin.assert:
+        that:
+        - nextcloud_client.config.nextcloud.user != None
+        - nextcloud_client.config.nextcloud.url != None
+
+    # mkdir 
+    - name: Mkdir /home/{{ nextcloud_client.user }}/.config/Nextcloud
+      become: true
+      ansible.builtin.file:
+        path: "/home/{{ nextcloud_client.user }}/.config/Nextcloud"
+        state: directory
+        owner: "{{ nextcloud_client.user }}"
+        group: "{{ nextcloud_client.user }}"
+        mode: o=rwx,g=,o=
+
+    # cp config
+    - name: Copy config {{ nextcloud_client.config.src }}
+      become: true
+      ansible.builtin.template:
+        src: "{{ nextcloud_client.config.src }}"
+        dest: "/home/{{ nextcloud_client.user }}/.config/Nextcloud/nextcloud.cfg"
+        owner: "{{ nextcloud_client.user }}"
+        group: "{{ nextcloud_client.user }}"
+        mode: u=rw,g=,o=r
