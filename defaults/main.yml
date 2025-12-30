@@ -1,21 +1,28 @@
 ---
+# required:
+nextcloud_client_config_local_dir:
+nextcloud_client_config_server_user:
+nextcloud_client_config_server_url:
 nextcloud_client_user:
+# optional
+# apt
 nextcloud_client_apt_install:
 - nextcloud-desktop
 - nautilus-nextcloud
 nextcloud_client_apt_remove: []
+# config
+nextcloud_client_config: nextcloud.cfg.j2
+nextcloud_client_config_dst: "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
+nextcloud_client_config_init: false
+# appimage
 nextcloud_client_appimage_state:
 nextcloud_client_appimage_file: # "{{ role_path }}/files/appimage/"
 nextcloud_client_appimage_icon: "{{ role_path }}/files/appimage/icon-nextcloud-96.png"
 nextcloud_client_appimage_dst: /opt/nextcloud-client/nextcloud-desktop.AppImage
 nextcloud_client_appimage_icon_dst: "{{ nextcloud_client_appimage_dst | dirname }}/icon.png"
+# desktop integration
 nextcloud_client_desktop:
 nextcloud_client_desktop_dst: /usr/share/applications/nextcloud-client.desktop
+# autostart
 nextcloud_client_autostart: false
 nextcloud_client_autostart_dst: "/home/{{ nextcloud_client_user }}/.config/autostart/nextcloud-client.desktop"
-nextcloud_client_config: nextcloud.cfg.j2
-nextcloud_client_config_dst: "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
-nextcloud_client_config_init: false
-nextcloud_client_config_local_dir:
-nextcloud_client_config_server_user:
-nextcloud_client_config_server_url:
