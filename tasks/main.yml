@@ -10,22 +10,34 @@
     ansible.builtin.assert:
       that:
       - nextcloud_client_user != None
-
-  # apt install
-  - when: nextcloud_client_apt_install | length > 0
-    name: Apt install {{ nextcloud_client_apt_install }}
+  
+  # flatpak
+  - when: nextcloud_client_flatpak_state != None
+    name: Flatpak -> {{ nextcloud_client_flatpak_scope }}
     become: true
-    ansible.builtin.apt:
-      state: present
-      name: "{{ nextcloud_client_apt_install }}"
+    community.general.flatpak:
+      name: com.nextcloud.desktopclient.nextcloud
+      method: system
+      state: "{{ nextcloud_client_flatpak_state }}"
 
-  # apt remove
-  - when: nextcloud_client_apt_remove | length > 0
-    name: Apt remove {{ nextcloud_client_apt_remove }}
-    become: true
-    ansible.builtin.apt:
-      state: absent
-      name: "{{ nextcloud_client_apt_remove }}"
+  # apt
+  - block:
+
+    # apt install
+    - when: nextcloud_client_apt_install | length > 0
+      name: Apt install {{ nextcloud_client_apt_install }}
+      become: true
+      ansible.builtin.apt:
+        state: present
+        name: "{{ nextcloud_client_apt_install }}"
+
+    # apt remove
+    - when: nextcloud_client_apt_remove | length > 0
+      name: Apt remove {{ nextcloud_client_apt_remove }}
+      become: true
+      ansible.builtin.apt:
+        state: absent
+        name: "{{ nextcloud_client_apt_remove }}"
 
   # cp autostart desktop file
   - when: nextcloud_client_autostart == true

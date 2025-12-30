@@ -6,6 +6,8 @@ nextcloud_client_apt_install:
 - nextcloud-desktop
 - nautilus-nextcloud
 nextcloud_client_apt_remove: []
+# flatpak
+nextcloud_client_flatpak_state:
 # config
 nextcloud_client_config: nextcloud.cfg.j2
 nextcloud_client_config_dst: "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
