@@ -2,16 +2,19 @@
 # required:
 nextcloud_client_user:
 # apt
-nextcloud_client_apt_install:
+nextcloud_client_apt_install: []
+# - nextcloud-desktop
+# - nautilus-nextcloud
+nextcloud_client_apt_remove:
 - nextcloud-desktop
 - nautilus-nextcloud
-nextcloud_client_apt_remove: []
 # flatpak
-nextcloud_client_flatpak_state:
+nextcloud_client_flatpak_state: present
 nextcloud_client_flatpak_override: flatpak-override.j2
 # config
-nextcloud_client_config: nextcloud.cfg.j2
-nextcloud_client_config_dst: "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
+nextcloud_client_config: nextcloud.cfg-v13.j2
+nextcloud_client_config_dst: /home/{{ nextcloud_client_user }}/.var/app/com.nextcloud.desktopclient.nextcloud/config/Nextcloud/nextcloud.cfg
+# "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
 nextcloud_client_config_force: false
 nextcloud_client_config_local_dir:
 nextcloud_client_config_server_user:
