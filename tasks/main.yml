@@ -20,6 +20,17 @@
       method: system
       state: "{{ nextcloud_client_flatpak_state }}"
 
+  # flatpak override
+  - when: nextcloud_client_flatpak_override != None 
+    name: Template {{ nextcloud_client_flatpak_override }}
+    become: true
+    ansible.builtin.template:
+      src: "{{ nextcloud_client_flatpak_override }}"
+      dest: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides/com.nextcloud.desktopclient.nextcloud"
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      mode: u=rw,g=,o=r # world readable
+
   # apt
   - block:
 
