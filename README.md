@@ -1,8 +1,16 @@
 NOTES
 =====
 
-Appimage
---------
+With **Flatpak** or **Appimage** installation don't install the nautilus plugin via **nautilus-nextcloud** because it also installs **nextcloud-desktop**.
 
-Don't use Appimage because **nautilus-nextcloud** depends on **nextcloud-desktop**
-So if we want the nautilus integration we need to install nextcloud via apt anyway.
+
+TO DO
+=====
+
+- Add nautilus integration for Flatpak installations
+
+
+CONFIG FILE
+===========
+
+- https://docs.nextcloud.com/server/latest/admin_manual/desktop/configfile.html
