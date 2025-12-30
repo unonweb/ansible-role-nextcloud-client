@@ -13,7 +13,7 @@
   
   # flatpak
   - when: nextcloud_client_flatpak_state != None
-    name: Flatpak -> {{ nextcloud_client_flatpak_scope }}
+    name: Flatpak -> {{ nextcloud_client_flatpak_state }}
     become: true
     community.general.flatpak:
       name: com.nextcloud.desktopclient.nextcloud
