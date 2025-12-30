@@ -1,10 +1,6 @@
 ---
 # required:
-nextcloud_client_config_local_dir:
-nextcloud_client_config_server_user:
-nextcloud_client_config_server_url:
 nextcloud_client_user:
-# optional
 # apt
 nextcloud_client_apt_install:
 - nextcloud-desktop
@@ -13,7 +9,10 @@ nextcloud_client_apt_remove: []
 # config
 nextcloud_client_config: nextcloud.cfg.j2
 nextcloud_client_config_dst: "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
-nextcloud_client_config_init: false
+nextcloud_client_config_force: false
+nextcloud_client_config_local_dir:
+nextcloud_client_config_server_user:
+nextcloud_client_config_server_url:
 # appimage
 nextcloud_client_appimage_state:
 nextcloud_client_appimage_file: # "{{ role_path }}/files/appimage/"
