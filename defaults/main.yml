@@ -16,6 +16,6 @@ nextcloud_client_autostart_dst: "/home/{{ nextcloud_client_user }}/.config/autos
 nextcloud_client_config: nextcloud.cfg.j2
 nextcloud_client_config_dst: "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
 nextcloud_client_config_init: false
-nextcloud_client_config_local_dir: # relative to home
-nextcloud_client_config_nextcloud_user:
-nextcloud_client_config_nextcloud_url: # https://cloud.franzk.net
+nextcloud_client_config_local_dir:
+nextcloud_client_config_server_user:
+nextcloud_client_config_server_url:

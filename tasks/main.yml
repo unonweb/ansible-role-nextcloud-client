@@ -140,8 +140,8 @@
     - name: Check vars for nextcloud-client role
       ansible.builtin.assert:
         that:
-        - nextcloud_client_config_nextcloud_user != None
-        - nextcloud_client_config_nextcloud_url != None
+        - nextcloud_client_config_server_user != None
+        - nextcloud_client_config_server_url != None
         - nextcloud_client_config_local_dir != None
 
     # mkdir 
