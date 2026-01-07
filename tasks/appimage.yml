@@ -1,0 +1,76 @@
+# appimage present
+- when: nextcloud_client_appimage_state == "present"
+  block:
+
+  # mkdir
+  - name: Mkdir {{ nextcloud_client_appimage_dst | dirname }}
+    become: true
+    ansible.builtin.file:
+      path: "{{ nextcloud_client_appimage_dst | dirname }}"
+      state: directory
+      mode: o=rwx,g=,o=rx
+
+  # copy appimage
+  - name: Copy appimage to {{ nextcloud_client_appimage_dst }}
+    become: true
+    ansible.builtin.copy:
+      src: "{{ nextcloud_client_appimage_file }}"
+      dest: "{{ nextcloud_client_appimage_dst }}"
+      owner: root
+      group: root
+      mode: u=rwx,g=,o=rx
+
+  # copy icon
+  - name: Copy icon {{ nextcloud_client_appimage_icon_dst }}
+    become: true
+    ansible.builtin.copy:
+      src: "{{ nextcloud_client_appimage_icon }}"
+      dest: "{{ nextcloud_client_appimage_icon_dst }}"
+      owner: root
+      group: root
+      mode: u=rw,g=,o=r
+
+  # template desktop file
+  - name: Template desktop file {{ nextcloud_client_desktop_dst }}
+    become: true
+    notify: update-desktop-database
+    ansible.builtin.template:
+      src: "{{ nextcloud_client_desktop }}"
+      dest: "{{ nextcloud_client_desktop_dst }}"
+      owner: root
+      group: root
+      mode: u=rw,g=,o=r # world readable
+
+  # template autostart desktop file
+  - when: nextcloud_client_autostart == true
+    become: true
+    name: Template autostart file {{ nextcloud_client_autostart_dst }}
+    notify: update-desktop-database
+    ansible.builtin.template:
+      src: appimage-autostart.desktop.j2
+      dest: "{{ nextcloud_client_autostart_dst }}"
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      mode: u=rw,g=,o=r # world readable
+
+# appimage absent
+- when: nextcloud_client_appimage_state == "absent"
+  block:
+
+  # remove app dir
+  - name: Remove {{ nextcloud_client_appimage_dst | dirname }}
+    become: true
+    ignore_errors: true
+    failed_when: false
+    ansible.builtin.file:
+      path: "{{ nextcloud_client_appimage_dst | dirname }}"
+      state: absent
+
+  # remove .desktop
+  - name: Remove "{{ nextcloud_client_desktop_dst }}"
+    become: true
+    ignore_errors: true
+    failed_when: false
+    ansible.builtin.file:
+      path: "{{ nextcloud_client_desktop_dst }}"
+      state: absent

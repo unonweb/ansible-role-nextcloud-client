@@ -1,0 +1,62 @@
+# ~/.local/share/icons/hicolor/${size}/apps
+
+# flatpak
+- when: nextcloud_client_flatpak_state != None
+  name: Flatpak -> {{ nextcloud_client_flatpak_state }}
+  become: true
+  community.general.flatpak:
+    name: com.nextcloud.desktopclient.nextcloud
+    method: system
+    state: "{{ nextcloud_client_flatpak_state }}"
+
+# mkdir overrides
+- name: Mkdir /home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides
+  become: true
+  ansible.builtin.file:
+    state: directory
+    mode: u=rwx,g=,o=rx
+    owner: "{{ nextcloud_client_user }}"
+    group: "{{ nextcloud_client_user }}"
+    path: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides"
+
+# flatpak override
+- when: nextcloud_client_flatpak_override != None
+  name: Template {{ nextcloud_client_flatpak_override }}
+  become: true
+  ansible.builtin.template:
+    src: "{{ nextcloud_client_flatpak_override }}"
+    dest: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides/com.nextcloud.desktopclient.nextcloud"
+    owner: "{{ nextcloud_client_user }}"
+    group: "{{ nextcloud_client_user }}"
+    mode: u=rw,g=,o=r # world readable
+
+# nautilus integration
+- when: nextcloud_client_flatpak_nautilus_integration == true
+  block:
+  
+  # copy icons
+  - name: Copy icons for nautilus-integration to /home/{{ nextcloud_client_user }}/.local/share/icons/hicolor/ ...
+    loop:
+    - 16x16
+    - 32x32
+    - 48x48
+    - 64x64
+    - 128x128
+    - 256x256
+    become: true
+    ansible.builtin.copy:
+      src: "nautilus-integration/icons/{{ item }}/"
+      dest: "/home/{{ nextcloud_client_user }}/.local/share/icons/hicolor/{{ item }}/apps/"
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      mode: u=rw,g=,o=r # world readable
+  
+  # copy script
+  - name: Copy script to /home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions/
+    become: true
+    ansible.builtin.copy:
+      src: "nautilus-integration/syncstate.py"
+      dest: "/home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions/"
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      mode: u=rw,g=,o=r # world readable
