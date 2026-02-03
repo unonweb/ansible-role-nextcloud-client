@@ -33,7 +33,14 @@
 # nautilus integration
 - when: nextcloud_client_flatpak_nautilus_integration == true
   block:
-  
+
+  # python3-nautilus
+  - name: Apt install python3-nautilus
+    become: true
+    ansible.builtin.apt:
+      state: present
+      name: python3-nautilus
+
   # copy icons
   - name: Copy icons for nautilus-integration to /home/{{ nextcloud_client_user }}/.local/share/icons/hicolor/ ...
     loop:
