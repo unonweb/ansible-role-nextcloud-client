@@ -1,6 +1,7 @@
 ---
 - name: nextcloud-client role
   tags:
+    - nextcloud
     - nextcloud-client
     - nextcloud-desktop
   block:
