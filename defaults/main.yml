@@ -32,4 +32,5 @@ nextcloud_client_desktop:
 nextcloud_client_desktop_dst: /usr/share/applications/nextcloud-client.desktop
 # autostart
 nextcloud_client_autostart: true
+nextcloud_client_autostart_src: autostart_flatpak
 nextcloud_client_autostart_dst: "/home/{{ nextcloud_client_user }}/.config/autostart/nextcloud-client.desktop"

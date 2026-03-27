@@ -49,11 +49,11 @@
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
 
-    - name: Copy autostart file {{ nextcloud_client_autostart_dst }}
+    - name: Copy autostart {{ nextcloud_client_autostart_src }} > {{ nextcloud_client_autostart_dst }}
       become: true
       notify: update-desktop-database
       ansible.builtin.copy:
-        src: nextcloud-client-autostart.apt.desktop
+        src: "{{ nextcloud_client_autostart_src }}"
         dest: "{{ nextcloud_client_autostart_dst }}"
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
