@@ -32,6 +32,7 @@
 
 # nautilus integration
 - when: nextcloud_client_flatpak_nautilus_integration == true
+  tags: nextcloud-nautilus
   block:
 
   # python3-nautilus
@@ -57,13 +58,35 @@
       owner: "{{ nextcloud_client_user }}"
       group: "{{ nextcloud_client_user }}"
       mode: u=rw,g=,o=r # world readable
-  
-  # copy script
-  - name: Copy script to /home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions/
+
+  # mkdir nautlius integration script
+  - name: Mkdir /home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions
     become: true
-    ansible.builtin.copy:
-      src: "nautilus-integration/syncstate.py"
-      dest: "/home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions/"
+    ansible.builtin.file:
+      state: directory
+      mode: o=rwx,g=,o=
+      path: "/home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions"
       owner: "{{ nextcloud_client_user }}"
       group: "{{ nextcloud_client_user }}"
+
+  # copy script
+  - name: Copy script to /home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions/nextcloud-syncstate.py
+    become: true
+    tags: nextcloud-syncstate
+    ansible.builtin.copy:
+      src: "nautilus-integration/{{ nextcloud_client_flatpak_nautilus_syncstate }}"
+      dest: "/home/{{ nextcloud_client_user }}/.local/share/nautilus-python/extensions/nextcloud-syncstate.py"
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      mode: u=rw,g=,o=r # world readable
+
+  # copy script
+  - name: Copy script to /usr/share/nautilus-python/extensions/nextcloud-syncstate.py
+    become: true
+    tags: nextcloud-syncstate
+    ansible.builtin.copy:
+      src: "nautilus-integration/{{ nextcloud_client_flatpak_nautilus_syncstate }}"
+      dest: "/usr/share/nautilus-python/extensions/nextcloud-syncstate.py"
+      owner: root
+      group: root
       mode: u=rw,g=,o=r # world readable
