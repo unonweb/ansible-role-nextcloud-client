@@ -1,6 +1,7 @@
 ---
 - name: nextcloud-client role
   tags:
+    - nextcloud
     - nextcloud-client
     - nextcloud-desktop
   block:
@@ -36,15 +37,27 @@
 
   # cp autostart desktop file
   - when: nextcloud_client_autostart == true
-    name: Copy autostart file {{ nextcloud_client_autostart_dst }}
-    become: true
-    notify: update-desktop-database
-    ansible.builtin.copy:
-      src: nextcloud-client-autostart.apt.desktop
-      dest: "{{ nextcloud_client_autostart_dst }}"
-      owner: "{{ nextcloud_client_user }}"
-      group: "{{ nextcloud_client_user }}"
-      mode: u=rw,g=,o=r # world readable
+    block:
+
+    # mkdir
+    - name: Mkdir {{ nextcloud_client_autostart_dst | dirname }}
+      become: true
+      ansible.builtin.file:
+        path: "{{ nextcloud_client_autostart_dst | dirname }}"
+        state: directory
+        mode: o=rwx,g=,o=x
+        owner: "{{ nextcloud_client_user }}"
+        group: "{{ nextcloud_client_user }}"
+
+    - name: Copy autostart {{ nextcloud_client_autostart_src }} > {{ nextcloud_client_autostart_dst }}
+      become: true
+      notify: update-desktop-database
+      ansible.builtin.copy:
+        src: "{{ nextcloud_client_autostart_src }}"
+        dest: "{{ nextcloud_client_autostart_dst }}"
+        owner: "{{ nextcloud_client_user }}"
+        group: "{{ nextcloud_client_user }}"
+        mode: u=rw,g=,o=r # world readable
 
   # appimage
   - when: nextcloud_client_appimage_state != None
