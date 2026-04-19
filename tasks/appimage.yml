@@ -8,7 +8,7 @@
     ansible.builtin.file:
       path: "{{ nextcloud_client_appimage_dst | dirname }}"
       state: directory
-      mode: o=rwx,g=,o=rx
+      mode: u=rwx,g=,o=rx
 
   # copy appimage
   - name: Copy appimage to {{ nextcloud_client_appimage_dst }}

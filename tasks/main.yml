@@ -45,7 +45,7 @@
       ansible.builtin.file:
         path: "{{ nextcloud_client_autostart_dst | dirname }}"
         state: directory
-        mode: o=rwx,g=,o=x
+        mode: u=rwx,g=,o=x
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
 
@@ -90,7 +90,7 @@
       become: true
       ansible.builtin.file:
         state: directory
-        mode: o=rwx,g=,o=
+        mode: u=rwx,g=,o=
         path: "{{ nextcloud_client_config_dst | dirname }}"
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
@@ -112,7 +112,7 @@
       become: true
       ansible.builtin.file:
         state: directory
-        mode: o=rwx,g=,o=
+        mode: u=rwx,g=,o=
         path: "{{ nextcloud_client_config_local_dir }}"
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
