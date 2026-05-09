@@ -13,26 +13,10 @@
 
   # flatpak
   - when: nextcloud_client_flatpak_state != None
-    ansible.builtin.import_tasks: flatpak.yml
+    ansible.builtin.import_tasks: install_flatpak.yml
 
   # apt
-  - block:
-
-    # apt install
-    - when: nextcloud_client_apt_install | length > 0
-      name: Apt install {{ nextcloud_client_apt_install }}
-      become: true
-      ansible.builtin.apt:
-        state: present
-        name: "{{ nextcloud_client_apt_install }}"
-
-    # apt remove
-    - when: nextcloud_client_apt_remove | length > 0
-      name: Apt remove {{ nextcloud_client_apt_remove }}
-      become: true
-      ansible.builtin.apt:
-        state: absent
-        name: "{{ nextcloud_client_apt_remove }}"
+  - ansible.builtin.import_tasks: install_apt.yml
 
   # cp autostart desktop file
   - when: nextcloud_client_autostart == true
@@ -48,7 +32,7 @@
 
   # appimage
   - when: nextcloud_client_appimage_state != None
-    ansible.builtin.import_tasks: appimage.yml
+    ansible.builtin.import_tasks: install_appimage.yml
 
   # remove .autostart
   - when: nextcloud_client_autostart == false 
@@ -77,7 +61,7 @@
       become: true
       ansible.builtin.file:
         state: directory
-        mode: o=rwx,g=,o=
+        mode: u=rwx,g=,o=
         path: "{{ nextcloud_client_config_dst | dirname }}"
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
@@ -99,7 +83,7 @@
       become: true
       ansible.builtin.file:
         state: directory
-        mode: o=rwx,g=,o=
+        mode: u=rwx,g=,o=
         path: "{{ nextcloud_client_config_local_dir }}"
         owner: "{{ nextcloud_client_user }}"
         group: "{{ nextcloud_client_user }}"
