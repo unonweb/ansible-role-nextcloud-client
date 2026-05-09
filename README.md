@@ -7,8 +7,7 @@ With **Flatpak** or **Appimage** installation don't install the nautilus plugin 
 TO DO
 =====
 
-- Add nautilus integration for Flatpak installations
-
+- Config destination path should be automatically chosen based on installation type
 
 CONFIG FILE
 ===========
