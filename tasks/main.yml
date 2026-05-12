@@ -12,6 +12,11 @@
       that:
       - nextcloud_client_user != None
 
+  # make sure user exists
+  - name: Check if user exists {{ nextcloud_client_user }}
+    command: "getent passwd {{ nextcloud_client_user }}"
+    changed_when: false
+
   # flatpak
   - when: nextcloud_client_flatpak_state != None
     ansible.builtin.import_tasks: flatpak.yml
