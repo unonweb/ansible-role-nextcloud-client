@@ -1,3 +1,4 @@
+---
 # appimage present
 - when: nextcloud_client_appimage_state == "present"
   block:
