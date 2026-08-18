@@ -1,0 +1,3 @@
+---
+__nextcloud_client_flatpak_id: com.nextcloud.desktopclient.nextcloud
+__nextcloud_client_flatpak_overrides_dir: /home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides

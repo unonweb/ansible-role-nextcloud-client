@@ -15,7 +15,14 @@ nextcloud_client_apt_remove:
 # FLATPAK
 # -------
 nextcloud_client_flatpak_state: present
-nextcloud_client_flatpak_override: flatpak-override.j2
+nextcloud_client_flatpak_overrides:
+nextcloud_client_flatpak_permissions:
+- table: "background"
+  id: "background"
+  value: "yes"
+- table: "notifications"
+  id: "notification"
+  value: "yes"
 nextcloud_client_flatpak_nautilus_integration: true
 nextcloud_client_flatpak_nautilus_syncstate: syncstate-original.py
 

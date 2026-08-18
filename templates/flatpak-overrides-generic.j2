@@ -1,0 +1,7 @@
+{% for section, settings in nextcloud_client_flatpak_overrides.items() %}
+[{{ section }}]
+{% for key, val in settings.items() %}
+{{ key }}={{ val }}
+{% endfor %}
+
+{% endfor %}

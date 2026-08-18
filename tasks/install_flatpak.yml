@@ -6,30 +6,44 @@
   name: Flatpak -> {{ nextcloud_client_flatpak_state }}
   become: true
   community.general.flatpak:
-    name: com.nextcloud.desktopclient.nextcloud
+    name: "{{ __nextcloud_client_flatpak_id }}"
     method: system
     state: "{{ nextcloud_client_flatpak_state }}"
 
-# mkdir overrides
-- name: Mkdir /home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides
-  become: true
-  ansible.builtin.file:
-    state: directory
-    mode: u=rwx,g=,o=rx
-    owner: "{{ nextcloud_client_user }}"
-    group: "{{ nextcloud_client_user }}"
-    path: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides"
+- when: nextcloud_client_flatpak_overrides != None
+  block:
 
-# flatpak override
-- when: nextcloud_client_flatpak_override != None
-  name: Template {{ nextcloud_client_flatpak_override }}
-  become: true
-  ansible.builtin.template:
-    src: "{{ nextcloud_client_flatpak_override }}"
-    dest: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides/com.nextcloud.desktopclient.nextcloud"
-    owner: "{{ nextcloud_client_user }}"
-    group: "{{ nextcloud_client_user }}"
-    mode: u=rw,g=,o=r # world readable
+  # mkdir overrides
+  - name: Mkdir {{ __nextcloud_client_flatpak_overrides_dir }}
+    become: true
+    ansible.builtin.file:
+      state: directory
+      mode: u=rwx,g=,o=rx
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      path: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides"
+
+  # flatpak override
+  - name: Template overrides {{ __nextcloud_client_flatpak_overrides_dir }}/{{ __nextcloud_client_flatpak_id }}
+    become: true
+    ansible.builtin.template:
+      src: flatpak-overrides-generic.j2
+      dest: "{{ __nextcloud_client_flatpak_overrides_dir }}/{{ __nextcloud_client_flatpak_id }}"
+      owner: "{{ nextcloud_client_user }}"
+      group: "{{ nextcloud_client_user }}"
+      mode: u=rw,g=,o=r # world readable
+
+# flatpak permissions
+- when: nextcloud_client_flatpak_permissions | length > 0
+  tags: nextcloud-client-flatpak-permissions
+  block:
+
+  # set permission
+  - name: Set permissions
+    ansible.builtin.command:
+      cmd: "flatpak permission-set {{ item.table }} {{ item.id }} {{ __nextcloud_client_flatpak_id }} {{ item.value }}"
+    loop: "{{ nextcloud_client_flatpak_permissions }}"
+    changed_when: false
 
 # nautilus integration
 - when: nextcloud_client_flatpak_nautilus_integration == true
