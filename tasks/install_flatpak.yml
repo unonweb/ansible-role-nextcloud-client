@@ -21,7 +21,7 @@
       mode: u=rwx,g=,o=rx
       owner: "{{ nextcloud_client_user }}"
       group: "{{ nextcloud_client_user }}"
-      path: "/home/{{ nextcloud_client_user }}/.local/share/flatpak/overrides"
+      path: "{{ __nextcloud_client_flatpak_overrides_dir }}"
 
   # flatpak override
   - name: Template overrides {{ __nextcloud_client_flatpak_overrides_dir }}/{{ __nextcloud_client_flatpak_id }}
