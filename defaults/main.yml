@@ -1,19 +1,26 @@
 ---
-# required:
+# USER
+# ----
 nextcloud_client_user:
-# apt
+
+# APT
+# ---
 nextcloud_client_apt_install: []
 # - nextcloud-desktop
 # - nautilus-nextcloud
 nextcloud_client_apt_remove:
 - nextcloud-desktop
 - nautilus-nextcloud
-# flatpak
+
+# FLATPAK
+# -------
 nextcloud_client_flatpak_state: present
 nextcloud_client_flatpak_override: flatpak-override.j2
 nextcloud_client_flatpak_nautilus_integration: true
 nextcloud_client_flatpak_nautilus_syncstate: syncstate-original.py
-# config
+
+# CONFIG
+# ------
 nextcloud_client_config: nextcloud.cfg-v13.j2
 nextcloud_client_config_dst: /home/{{ nextcloud_client_user }}/.var/app/com.nextcloud.desktopclient.nextcloud/config/Nextcloud/nextcloud.cfg # ATT! need to adjust this when switching installation type
 # "/home/{{ nextcloud_client_user }}/.config/Nextcloud/nextcloud.cfg"
@@ -21,16 +28,22 @@ nextcloud_client_config_force: false
 nextcloud_client_config_local_dir:
 nextcloud_client_config_server_user:
 nextcloud_client_config_server_url:
-# appimage
+
+# APPIMAGE
+# --------
 nextcloud_client_appimage_state:
 nextcloud_client_appimage_file: # "{{ role_path }}/files/appimage/"
 nextcloud_client_appimage_icon: "{{ role_path }}/files/appimage/icon-nextcloud-96.png"
 nextcloud_client_appimage_dst: /opt/nextcloud-client/nextcloud-desktop.AppImage
 nextcloud_client_appimage_icon_dst: "{{ nextcloud_client_appimage_dst | dirname }}/icon.png"
-# desktop integration
+
+# DESKTOP integration
+# -------------------
 nextcloud_client_desktop:
 nextcloud_client_desktop_dst: /usr/share/applications/nextcloud-client.desktop
-# autostart
+
+# AUTOSTART
+# ---------
 nextcloud_client_autostart: true
 nextcloud_client_autostart_src: autostart_flatpak
 nextcloud_client_autostart_dst: "/home/{{ nextcloud_client_user }}/.config/autostart/nextcloud-client.desktop"
